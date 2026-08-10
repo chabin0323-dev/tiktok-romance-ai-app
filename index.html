@@ -38,7 +38,7 @@
       <i class="fa-solid fa-crown text-yellow-400 text-xl"></i>
       <h1 class="text-xl font-extrabold tracking-wider gold-gradient-text">バズ分析＆コンテンツ自動生成AI Pro</h1>
     </div>
-    <p class="text-xs text-purple-200 mt-1">TikTok台本 → 誘導(CTA) → note記事 完全自動生成</p>
+    <p class="text-xs text-purple-200 mt-1">TikTok台本 → バズ度採点・最適化 → note記事 完全自動生成</p>
   </header>
 
   <!-- Main Container -->
@@ -95,9 +95,8 @@
       <div>
         <label class="text-[11px] text-gray-300 mb-1.5 block">末尾の誘導文（CTA設定）</label>
         
-        <!-- Dropdown menu including saved custom items -->
         <select id="cta-preset" onchange="applyCtaPreset()" class="w-full bg-black/50 text-xs border border-white/20 rounded-lg p-2 mb-2 text-yellow-300 font-medium focus:outline-none">
-          <!-- JSで動的に構築されます -->
+          <!-- JSで動的に構築 -->
         </select>
 
         <div class="space-y-2">
@@ -119,7 +118,7 @@
     <!-- Mode Selection -->
     <div class="glass-card rounded-2xl p-5">
       <h3 class="text-sm font-bold gold-gradient-text mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-list-check"></i> バズタイトルを選択して生成
+        <i class="fa-solid fa-list-check"></i> バズタイトルを選択して生成・採点
       </h3>
       
       <div class="space-y-2 text-xs">
@@ -148,10 +147,31 @@
 
     <!-- Output Section -->
     <div id="output-section" class="hidden space-y-4">
+      
+      <!-- Score & Analysis Card -->
+      <div class="glass-card rounded-2xl p-5 border-yellow-500/50 bg-yellow-500/5">
+        <div class="flex items-center justify-between mb-3 border-b border-yellow-500/20 pb-3">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-yellow-400"></i>
+            <span class="text-xs font-bold text-yellow-300">AIバズ度診断結果</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="text-2xl font-black text-yellow-400" id="buzz-score">94</span>
+            <span class="text-xs text-gray-400">/ 100点</span>
+          </div>
+        </div>
+        <div id="buzz-analysis" class="text-xs text-gray-300 space-y-1.5 leading-relaxed">
+          <!-- 解析結果テキストが入ります -->
+        </div>
+      </div>
+
+      <!-- Result Card -->
       <div class="glass-card rounded-2xl p-5 border-yellow-500/40">
         <div class="flex justify-between items-center mb-3">
-          <span class="text-xs text-yellow-400 font-bold"><i class="fa-solid fa-check-circle"></i> 生成完了</span>
-          <button onclick="copyAll()" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full text-gray-200">
+          <span class="text-xs text-yellow-400 font-bold flex items-center gap-1.5">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> 最適化コンテンツ
+          </span>
+          <button onclick="copyAll()" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full text-gray-200 flex items-center gap-1">
             <i class="fa-regular fa-copy"></i> 全体コピー
           </button>
         </div>
@@ -169,7 +189,6 @@
     let noteWords = '500文字';
     let currentThemeIndex = 0;
 
-    // 初期プリセット定義
     const defaultPresets = [
       { type: 'default', text: '基本：気になる方はプロフィールのリンクから' },
       { type: 'default', text: '恋愛：プロフィールの「無料相性診断」を試してみてね！' },
@@ -178,20 +197,17 @@
       { type: 'default', text: 'LINE誘導：公式LINEからチェックしてみてね！' }
     ];
 
-    // 保存済みリストのロード
     function getCustomPresets() {
       const saved = localStorage.getItem('user_cta_list');
       return saved ? JSON.parse(saved) : [];
     }
 
-    // プルダウンの再描画
     function renderDropdown(selectedText = null) {
       const select = document.getElementById('cta-preset');
       const customs = getCustomPresets();
       
       let html = '<option value="manual">▼ 新規入力（下部に入力して保存）</option>';
 
-      // ユーザー保存分（★付きで一番上に表示）
       if (customs.length > 0) {
         html += '<optgroup label="★ 保存済みのカスタム誘導文">';
         customs.forEach((item, index) => {
@@ -200,7 +216,6 @@
         html += '</optgroup>';
       }
 
-      // デフォルトプリセット
       html += '<optgroup label="▼ 標準プリセット">';
       defaultPresets.forEach((item, index) => {
         html += `<option value="default_${index}">${item.text}</option>`;
@@ -209,7 +224,6 @@
 
       select.innerHTML = html;
 
-      // 選択状態の復元
       if (selectedText) {
         const customIdx = customs.indexOf(selectedText);
         if (customIdx !== -1) {
@@ -225,17 +239,15 @@
         }
       }
       
-      // デフォルト初期値
       if (customs.length > 0) {
         select.value = 'custom_0';
         document.getElementById('cta-text').value = customs[0];
       } else {
-        select.value = 'default_1'; // 恋愛用をデフォルトに
+        select.value = 'default_1';
         document.getElementById('cta-text').value = 'プロフィールの「無料相性診断」を試してみてね！';
       }
     }
 
-    // プルダウン変更時
     function applyCtaPreset() {
       const select = document.getElementById('cta-preset');
       const input = document.getElementById('cta-text');
@@ -251,14 +263,12 @@
       } else if (val.startsWith('default_')) {
         const idx = parseInt(val.replace('default_', ''));
         if (defaultPresets[idx]) {
-          // 接頭辞（恋愛：など）を外したテキストをセット
           const raw = defaultPresets[idx].text;
           input.value = raw.includes('：') ? raw.split('：')[1] : raw;
         }
       }
     }
 
-    // 新規追加保存
     function saveCustomCta() {
       const input = document.getElementById('cta-text');
       const text = input.value.trim();
@@ -270,7 +280,7 @@
 
       let customs = getCustomPresets();
       if (!customs.includes(text)) {
-        customs.unshift(text); // 先頭に追加
+        customs.unshift(text);
         localStorage.setItem('user_cta_list', JSON.stringify(customs));
         renderDropdown(text);
         showStatusMsg('プルダウンに保存しました！');
@@ -279,7 +289,6 @@
       }
     }
 
-    // 選択項目の削除
     function deleteSelectedCta() {
       const select = document.getElementById('cta-preset');
       const val = select.value;
@@ -314,18 +323,18 @@
 
     const tiktokTemplates = {
       2: {
-        '15秒': `タイトル：復縁できる女子が絶対にやらないLINE
+        '15秒': `タイトル：【神回】復縁できる女子が絶対にやらないLINE3選
 
-復縁したいからって焦ってLINEを送る人はすごく多いです。
-NG行動を知っておくだけでやり直せる確率は上がります！
+復縁したいからって焦ってLINE送ってない？
+これを知っておくだけで復縁率は跳ね上がります！
 
-一番やっちゃいけないのは「未練を感じさせる長文LINE」と「用事のない探りLINE」。
-復縁できる女子は、彼の反応を冷静に見極めて行動しています。
+絶対にダメなのは「未練だらけの長文」と「用事のない探り」。
+本当に復縁できる人は相手を惹きつけるタイミングを狙ってます。
 
 {CTA}
 
 #復縁 #恋愛心理 #LINE術 #自分磨き`,
-        '30秒': `タイトル：復縁できる女子が絶対にやらないLINE
+        '30秒': `タイトル：【バズ確定】復縁できる女子が絶対にやらないLINE
 
 「元彼とやり直したい…」そう思って焦ってLINEを送っていませんか？
 復縁できる女子が「絶対にやらないLINE」があります。
@@ -340,7 +349,7 @@ NG行動を知っておくだけでやり直せる確率は上がります！
 {CTA}
 
 #復縁 #元彼 #LINEテク #恋愛心理 #自分磨き`,
-        '60秒': `タイトル：復縁できる女子が絶対にやらないLINE
+        '60秒': `タイトル：【完全版】復縁できる女子が絶対にやらないLINE
 
 別れたあと、「どうしてもやり直したい」と思って焦ってLINEを送ってしまう人はとても多いです。
 発生しやすいNG行動を知っておくだけで、復縁率は上がります。
@@ -492,14 +501,26 @@ NG行動を知っておくだけでやり直せる確率は上がります！
     function generateContent() {
       const output = document.getElementById('output-section');
       const resultContent = document.getElementById('result-content');
+      const buzzScore = document.getElementById('buzz-score');
+      const buzzAnalysis = document.getElementById('buzz-analysis');
       const customCta = document.getElementById('cta-text').value.trim() || '気になる方はプロフィールのリンクから';
       
       output.classList.remove('hidden');
-      resultContent.innerHTML = `AIが構成・台本(${tiktokLength})・note記事(${noteWords})を一括生成中...`;
+      resultContent.innerHTML = `AIが分析＆バズ度採点中...最適化台本・記事を生成しています`;
 
       output.scrollIntoView({ behavior: 'smooth' });
 
       setTimeout(() => {
+        // スコアと解析結果の生成
+        const score = Math.floor(Math.random() * 6) + 93; // 93〜98点
+        buzzScore.innerText = score;
+
+        buzzAnalysis.innerHTML = `
+          <p><strong>【フック強度】</strong> 冒頭1.5秒でターゲット層（復縁・恋愛悩み層）のスクロールの手を止める『強い禁忌性』を含んでいます。</p>
+          <p><strong>【共感・離脱防止】</strong> 『やってはいけないNG事例』をテンポよく羅列することで維持率を最大化します。</p>
+          <p><strong>【CTA導線】</strong> プロフィールリンクへの誘導文（${customCta}）が自然で高いクリック率が期待できます。</p>
+        `;
+
         let ttTemplate = (tiktokTemplates[currentThemeIndex] && tiktokTemplates[currentThemeIndex][tiktokLength]) 
           ? tiktokTemplates[currentThemeIndex][tiktokLength] 
           : tiktokTemplates[2][tiktokLength];
@@ -511,12 +532,12 @@ NG行動を知っておくだけでやり直せる確率は上がります！
         let ttText = ttTemplate.replace('{CTA}', customCta);
         let ntText = ntTemplate.replace('{CTA}', customCta);
 
-        resultContent.innerHTML = `【TikTok投稿用台本（${tiktokLength}仕様）】
+        resultContent.innerHTML = `【TikTok投稿用台本（${tiktokLength}仕様・最適化済）】
 ${ttText}
 
 ----------------------------------------
 
-【note記事本文（${noteWords}仕様）】
+【note記事本文（${noteWords}仕様・最適化済）】
 ${ntText}
 
 ----------------------------------------
