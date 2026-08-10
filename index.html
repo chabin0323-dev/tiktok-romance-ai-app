@@ -94,22 +94,25 @@
       <!-- Custom CTA Input -->
       <div>
         <label class="text-[11px] text-gray-300 mb-1.5 block">末尾の誘導文（CTA設定）</label>
-        <select id="cta-preset" onchange="applyCtaPreset()" class="w-full bg-black/50 text-xs border border-white/20 rounded-lg p-2 mb-2 text-gray-200">
-          <option value="custom">▼ プリセットから選択（または下部に入力）</option>
-          <option value="気になる方はプロフィールのリンクから">基本：気になる方はプロフィールのリンクから</option>
-          <option value="プロフィールの「無料相性診断」を試してみてね！">恋愛：プロフィールの「無料相性診断」を試してみてね！</option>
-          <option value="プロフィールリンクからあの人との相性を占えます！">占い：プロフィールリンクからあの人との相性を占えます！</option>
-          <option value="無料の限定マガジンはプロフィールから受け取れます">副業・ビジネス：無料のマガジンはプロフィールから</option>
-          <option value="詳しくはプロフィールの公式LINEからチェックしてみてね！">LINE誘導：公式LINEからチェックしてみてね！</option>
+        
+        <!-- Dropdown menu including saved custom items -->
+        <select id="cta-preset" onchange="applyCtaPreset()" class="w-full bg-black/50 text-xs border border-white/20 rounded-lg p-2 mb-2 text-yellow-300 font-medium focus:outline-none">
+          <!-- JSで動的に構築されます -->
         </select>
 
-        <div class="flex gap-2">
-          <input type="text" id="cta-text" oninput="saveCtaAuto()" value="気になる方はプロフィールのリンクから" placeholder="誘導文を入力してください" class="flex-1 bg-black/40 text-xs border border-white/20 rounded-lg p-2 text-yellow-300 placeholder-gray-500 focus:outline-none focus:border-yellow-400">
-          <button onclick="saveCtaManual()" class="px-3 py-2 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 text-xs rounded-lg border border-yellow-500/40 flex items-center gap-1 whitespace-nowrap">
-            <i class="fa-solid fa-floppy-disk"></i> 保存
-          </button>
+        <div class="space-y-2">
+          <input type="text" id="cta-text" placeholder="新しい誘導文を入力して保存できます" class="w-full bg-black/40 text-xs border border-white/20 rounded-lg p-2 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-yellow-400">
+          
+          <div class="flex gap-2 justify-end">
+            <button onclick="deleteSelectedCta()" class="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs rounded-lg border border-red-500/40 flex items-center gap-1">
+              <i class="fa-solid fa-trash-can"></i> 選択中の項目を削除
+            </button>
+            <button onclick="saveCustomCta()" class="px-3 py-1.5 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 text-xs rounded-lg border border-yellow-500/40 flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> プルダウンに保存
+            </button>
+          </div>
         </div>
-        <p id="save-msg" class="text-[10px] text-green-400 mt-1 hidden"><i class="fa-solid fa-check"></i> 入力した文章を保存しました</p>
+        <p id="save-msg" class="text-[10px] mt-1.5 hidden"></p>
       </div>
     </div>
 
@@ -166,36 +169,148 @@
     let noteWords = '500文字';
     let currentThemeIndex = 0;
 
-    // ページ読み込み時に保存済みCTAを復元
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedCta = localStorage.getItem('custom_cta_text');
-      if (savedCta) {
-        document.getElementById('cta-text').value = savedCta;
-      }
-    });
+    // 初期プリセット定義
+    const defaultPresets = [
+      { type: 'default', text: '基本：気になる方はプロフィールのリンクから' },
+      { type: 'default', text: '恋愛：プロフィールの「無料相性診断」を試してみてね！' },
+      { type: 'default', text: '占い：プロフィールリンクからあの人との相性を占えます！' },
+      { type: 'default', text: '副業・ビジネス：無料のマガジンはプロフィールから' },
+      { type: 'default', text: 'LINE誘導：公式LINEからチェックしてみてね！' }
+    ];
 
-    function saveCtaAuto() {
-      const text = document.getElementById('cta-text').value;
-      localStorage.setItem('custom_cta_text', text);
+    // 保存済みリストのロード
+    function getCustomPresets() {
+      const saved = localStorage.getItem('user_cta_list');
+      return saved ? JSON.parse(saved) : [];
     }
 
-    function saveCtaManual() {
-      saveCtaAuto();
+    // プルダウンの再描画
+    function renderDropdown(selectedText = null) {
+      const select = document.getElementById('cta-preset');
+      const customs = getCustomPresets();
+      
+      let html = '<option value="manual">▼ 新規入力（下部に入力して保存）</option>';
+
+      // ユーザー保存分（★付きで一番上に表示）
+      if (customs.length > 0) {
+        html += '<optgroup label="★ 保存済みのカスタム誘導文">';
+        customs.forEach((item, index) => {
+          html += `<option value="custom_${index}">★ ${item}</option>`;
+        });
+        html += '</optgroup>';
+      }
+
+      // デフォルトプリセット
+      html += '<optgroup label="▼ 標準プリセット">';
+      defaultPresets.forEach((item, index) => {
+        html += `<option value="default_${index}">${item.text}</option>`;
+      });
+      html += '</optgroup>';
+
+      select.innerHTML = html;
+
+      // 選択状態の復元
+      if (selectedText) {
+        const customIdx = customs.indexOf(selectedText);
+        if (customIdx !== -1) {
+          select.value = `custom_${customIdx}`;
+          document.getElementById('cta-text').value = selectedText;
+          return;
+        }
+        const defaultIdx = defaultPresets.findIndex(p => p.text === selectedText);
+        if (defaultIdx !== -1) {
+          select.value = `default_${defaultIdx}`;
+          document.getElementById('cta-text').value = selectedText;
+          return;
+        }
+      }
+      
+      // デフォルト初期値
+      if (customs.length > 0) {
+        select.value = 'custom_0';
+        document.getElementById('cta-text').value = customs[0];
+      } else {
+        select.value = 'default_1'; // 恋愛用をデフォルトに
+        document.getElementById('cta-text').value = 'プロフィールの「無料相性診断」を試してみてね！';
+      }
+    }
+
+    // プルダウン変更時
+    function applyCtaPreset() {
+      const select = document.getElementById('cta-preset');
+      const input = document.getElementById('cta-text');
+      const val = select.value;
+
+      if (val === 'manual') {
+        input.value = '';
+        input.focus();
+      } else if (val.startsWith('custom_')) {
+        const idx = parseInt(val.replace('custom_', ''));
+        const customs = getCustomPresets();
+        if (customs[idx]) input.value = customs[idx];
+      } else if (val.startsWith('default_')) {
+        const idx = parseInt(val.replace('default_', ''));
+        if (defaultPresets[idx]) {
+          // 接頭辞（恋愛：など）を外したテキストをセット
+          const raw = defaultPresets[idx].text;
+          input.value = raw.includes('：') ? raw.split('：')[1] : raw;
+        }
+      }
+    }
+
+    // 新規追加保存
+    function saveCustomCta() {
+      const input = document.getElementById('cta-text');
+      const text = input.value.trim();
+
+      if (!text) {
+        showStatusMsg('文章を入力してください', true);
+        return;
+      }
+
+      let customs = getCustomPresets();
+      if (!customs.includes(text)) {
+        customs.unshift(text); // 先頭に追加
+        localStorage.setItem('user_cta_list', JSON.stringify(customs));
+        renderDropdown(text);
+        showStatusMsg('プルダウンに保存しました！');
+      } else {
+        showStatusMsg('すでに登録されています', true);
+      }
+    }
+
+    // 選択項目の削除
+    function deleteSelectedCta() {
+      const select = document.getElementById('cta-preset');
+      const val = select.value;
+
+      if (val.startsWith('custom_')) {
+        const idx = parseInt(val.replace('custom_', ''));
+        let customs = getCustomPresets();
+        customs.splice(idx, 1);
+        localStorage.setItem('user_cta_list', JSON.stringify(customs));
+        renderDropdown();
+        showStatusMsg('プルダウンから削除しました', true);
+      } else if (val.startsWith('default_')) {
+        showStatusMsg('標準プリセットは削除できません', true);
+      } else {
+        showStatusMsg('削除する項目を選択してください', true);
+      }
+    }
+
+    function showStatusMsg(text, isError = false) {
       const msg = document.getElementById('save-msg');
+      msg.className = `text-[10px] mt-1.5 ${isError ? 'text-red-400' : 'text-green-400'}`;
+      msg.innerHTML = isError ? `<i class="fa-solid fa-circle-exclamation"></i> ${text}` : `<i class="fa-solid fa-check"></i> ${text}`;
       msg.classList.remove('hidden');
       setTimeout(() => {
         msg.classList.add('hidden');
       }, 2000);
     }
 
-    function applyCtaPreset() {
-      const select = document.getElementById('cta-preset');
-      const input = document.getElementById('cta-text');
-      if (select.value !== 'custom') {
-        input.value = select.value;
-        saveCtaAuto();
-      }
-    }
+    window.addEventListener('DOMContentLoaded', () => {
+      renderDropdown();
+    });
 
     const tiktokTemplates = {
       2: {
