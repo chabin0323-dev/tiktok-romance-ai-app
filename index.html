@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TikTokバズ分析＆自動生成AI Pro</title>
+  <title>TikTokバズ分析＆コンテンツ自動生成AI Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -96,7 +96,6 @@
         <label class="text-[11px] text-gray-300 mb-1.5 block">末尾の誘導文（CTA設定）</label>
         
         <select id="cta-preset" onchange="applyCtaPreset()" class="w-full bg-black/50 text-xs border border-white/20 rounded-lg p-2 mb-2 text-yellow-300 font-medium focus:outline-none">
-          <!-- JSで動的に構築 -->
         </select>
 
         <div class="space-y-2">
@@ -165,10 +164,8 @@
         </div>
         
         <div id="buzz-analysis" class="text-xs text-gray-300 space-y-1.5 leading-relaxed">
-          <!-- 解析結果テキストが入ります -->
         </div>
 
-        <!-- 点数アップ・再最適化ボタン -->
         <div id="boost-btn-container" class="mt-4 pt-3 border-t border-white/10 hidden">
           <button onclick="boostContent()" class="w-full py-2.5 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-extrabold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
             <i class="fa-solid fa-bolt text-sm"></i> バズ度を95点以上に自動最適化（点数アップ）
@@ -188,7 +185,6 @@
         </div>
         
         <div id="result-content" class="text-xs text-gray-200 space-y-4 whitespace-pre-wrap leading-relaxed max-h-[500px] overflow-y-auto p-3 bg-black/40 rounded-lg border border-white/5 select-text">
-          <!-- 生成結果挿入域 -->
         </div>
       </div>
     </div>
@@ -333,45 +329,61 @@
       renderDropdown();
     });
 
+    // 改行を明確に入れたTikTok台本テンプレート
     const tiktokTemplates = {
       2: {
-        '15秒': `タイトル：【神回】復縁できる女子が絶対にやらないLINE3選
+        '15秒': `【TikTok投稿用台本（15秒仕様）】
+タイトル：【神回】復縁できる女子が絶対にやらないLINE3選
 
 復縁したいからって焦ってLINE送ってない？
+
 これを知っておくだけで復縁率は跳ね上がります！
 
 絶対にダメなのは「未練だらけの長文」と「用事のない探り」。
+
 本当に復縁できる人は相手を惹きつけるタイミングを狙ってます。
 
 {CTA}
 
 #復縁 #恋愛心理 #LINE術 #自分磨き`,
-        '30秒': `タイトル：【バズ確定】復縁できる女子が絶対にやらないLINE
+
+        '30秒': `【TikTok投稿用台本（30秒仕様）】
+タイトル：【バズ確定】復縁できる女子が絶対にやらないLINE
 
 「元彼とやり直したい…」そう思って焦ってLINEを送っていませんか？
+
 復縁できる女子が「絶対にやらないLINE」があります。
 
-1. 長文での感謝や反省を伝えるLINE
-2. 「最近どう？」などの用事のない探りLINE
-3. 返事がないのに連続で送る追いLINE
+1つ目。「長文での感謝や反省を伝えるLINE」
+
+2つ目。「『最近どう？』などの用事のない探りLINE」
+
+3つ目。「返事がないのに連続で送る追いLINE」
 
 これらはすべて「重い」と感じさせ、ブロックの原因になります。
+
 復縁で大切なのは「引く勇気」と「タイミングを見極めること」。
 
 {CTA}
 
 #復縁 #元彼 #LINEテク #恋愛心理 #自分磨き`,
-        '60秒': `タイトル：【完全版】復縁できる女子が絶対にやらないLINE
+
+        '60秒': `【TikTok投稿用台本（60秒仕様）】
+タイトル：【完全版】復縁できる女子が絶対にやらないLINE
 
 別れたあと、「どうしてもやり直したい」と思って焦ってLINEを送ってしまう人はとても多いです。
+
 発生しやすいNG行動を知っておくだけで、復縁率は上がります。
 
 復縁できる女子が「絶対にやらないLINE」の共通点をみていきましょう。
 
 1つ目。「長文での感謝や反省を伝えるLINE」。別れた直後にこれを送ると、相手は重く感じてさらに心を閉じます。
+
 2つ目。「用事のない探りLINE」。『最近どう？』などは未練が透けて見えて警戒されます。
+
 3つ目。「お酒の勢いで送る夜中のLINE」。感情的な行動は一発で嫌われます。
-4つ目。「返事がないのに連続で送る追いLINE」。
+
+4つ目。「返事がないのに連続で送る追いLINE」。圧迫感を与えてブロックの原因になります。
 
 復縁できる女子は、一度しっかり距離を置いて、相手の警戒がとけたタイミングで「かるい用事」だけを送ります。
 
@@ -383,7 +395,8 @@
 
     const noteTemplates = {
       2: {
-        '500文字': `タイトル：復縁できる女子が絶対にやらないLINE〜焦りを捨てて復縁率を跳ね上げる方法〜
+        '500文字': `【note記事本文（500文字仕様）】
+タイトル：復縁できる女子が絶対にやらないLINE〜焦りを捨てて復縁率を跳ね上げる方法〜
 
 「どうしても彼とやり直したい…」
 別れた直後、焦りや寂しさからスマホを手放せなくなる気持ちはとてもよく分かります。
@@ -401,7 +414,9 @@
 {CTA}
 
 #復縁 #恋愛心理 #LINEテク #元彼 #復縁方法`,
-        '1000文字': `タイトル：復縁できる女子が絶対にやらないLINE〜焦りを捨てて復縁率を跳ね上げる方法〜
+
+        '1000文字': `【note記事本文（1000文字仕様）】
+タイトル：復縁できる女子が絶対にやらないLINE〜焦りを捨てて復縁率を跳ね上げる方法〜
 
 別れたあとに「やっぱり彼しかいない」と気づき、どうにか関係を修復したいと願う女性は少なくありません。
 しかし、焦って送った1本のLINEが原因で、復縁の可能性を自ら潰してしまうケースが非常に多いのが現実です。
@@ -411,7 +426,7 @@
 ■ 復縁できる女子が「絶対にやらないLINE」4選
 
 1. 感謝や反省を伝える長文LINE
-「今までありがとう」「私が悪かった」と長文で送ると、相手は「重い」「返気に困る」と感じて警戒を強めます。
+「今までありがとう」「私が悪かった」と長文で送ると、相手は「重い」「返信に困る」と感じて警戒を強めます。
 
 2. 用事のない「探りLINE」
 「元気に設定してる？」「最近寒いね」など、理由のない連絡は未練が透けて見え、返信の優先度を下げられます。
@@ -430,7 +445,9 @@
 {CTA}
 
 #復縁 #元彼 #LINEテク #恋愛心理 #復縁方法 #自分磨き`,
-        '2000文字': `タイトル：復縁できる女子が絶対にやらないLINE〜焦りを捨てて復縁率を跳ね上げる方法〜
+
+        '2000文字': `【note記事本文（2000文字仕様）】
+タイトル：復縁できる女子が絶対にやらないLINE〜焦りを捨てて復縁率を跳ね上げる方法〜
 
 「元彼とどうしてもやり直したい」
 「LINEを送りたいけれど、嫌われたらどうしよう…」
@@ -525,7 +542,6 @@
       output.scrollIntoView({ behavior: 'smooth' });
 
       setTimeout(() => {
-        // ランダム要素（テスト用に70%の確率で高スコア、30%で標準スコア）
         currentScore = Math.random() > 0.3 ? Math.floor(Math.random() * 5) + 94 : 72;
         buzzScore.innerText = currentScore;
 
@@ -542,7 +558,7 @@
         } else {
           buzzRank.innerText = '評価: Bランク (改善の余地あり)';
           buzzRank.className = 'px-2 py-0.5 text-[10px] font-bold rounded bg-orange-500/30 text-orange-300 border border-orange-500/50';
-          boostContainer.classList.remove('hidden'); // 点数アップボタンを表示
+          boostContainer.classList.remove('hidden');
 
           buzzAnalysis.innerHTML = `
             <p><strong>【フック強度】</strong> 冒頭の引き込みがやや標準的です。より刺激的な表現を追加できます。</p>
@@ -562,17 +578,14 @@
         let ttText = ttTemplate.replace('{CTA}', customCta);
         let ntText = ntTemplate.replace('{CTA}', customCta);
 
-        resultContent.innerHTML = `【TikTok投稿用台本（${tiktokLength}仕様）】
-${ttText}
+        resultContent.innerHTML = `${ttText}
 
-----------------------------------------
+========================================
 
-【note記事本文（${noteWords}仕様）】
 ${ntText}`;
       }, 700);
     }
 
-    // 点数アップ＆再最適化機能
     function boostContent() {
       const resultContent = document.getElementById('result-content');
       const buzzScore = document.getElementById('buzz-score');
@@ -607,13 +620,10 @@ ${ntText}`;
         let ttText = ttTemplate.replace('{CTA}', customCta);
         let ntText = ntTemplate.replace('{CTA}', customCta);
 
-        resultContent.innerHTML = `【TikTok投稿用台本（${tiktokLength}仕様・高バズ再最適化済）】
-【※冒頭1.5秒フック強化版】
-${ttText}
+        resultContent.innerHTML = `${ttText}
 
-----------------------------------------
+========================================
 
-【note記事本文（${noteWords}仕様・高バズ再最適化済）】
 ${ntText}`;
       }, 800);
     }
