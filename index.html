@@ -1,300 +1,307 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buzz Analysis & Content Auto-Generation AI Pro</title>
-    <style>
-        :root {
-            --bg-color: #0f0c20;
-            --card-bg: #1a103c;
-            --text-color: #f3f4f6;
-            --accent-gold: #ffe259;
-            --accent-gold-dark: #ffa751;
-            --border-color: rgba(255, 215, 0, 0.2);
-            --button-gold: #ffe259;
-            --button-gold-hover: #ffa751;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .phone-container {
-            width: 375px;
-            height: 812px;
-            background-color: #000;
-            border: 12px solid #333;
-            border-radius: 40px;
-            overflow: hidden;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .app-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            padding-bottom: 30px;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .section {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .section-header {
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        .section-header span.number {
-            background-color: rgba(255, 215, 0, 0.1);
-            color: var(--accent-gold);
-            width: 25px;
-            height: 25px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 10px;
-            font-size: 14px;
-        }
-
-        textarea, input[type="text"] {
-            width: 100%;
-            background-color: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-color);
-            padding: 10px;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .save-btn {
-            background-color: var(--button-gold);
-            color: #000;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-left: auto;
-        }
-
-        .keyword-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .keyword-card {
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 12px;
-            cursor: pointer;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .keyword-card .copy-icon {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            font-size: 14px;
-            color: rgba(255,255,255,0.5);
-        }
-
-        .keyword-card span.copy-text {
-            color: rgba(255,255,255,0.7);
-            font-size: 10px;
-            align-self: flex-end;
-        }
-
-        .keyword-card.gold { border: 1px solid #ffe259; color: #ffe259; }
-        .keyword-card.blue { border: 1px solid #4a90e2; color: #4a90e2; }
-        .keyword-card.pink { border: 1px solid #e24a90; color: #e24a90; }
-        .keyword-card.purple { border: 1px solid #904ae2; color: #904ae2; }
-
-        .dropdown-container {
-            position: relative;
-            margin-top: 20px;
-        }
-
-        select {
-            width: 100%;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 10px;
-            border-radius: 8px;
-            appearance: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .dropdown-icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-color);
-            pointer-events: none;
-        }
-
-        .action-btns {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .delete-btn {
-            background-color: #3c1020;
-            color: #ff4a90;
-            border: 1px solid rgba(255, 74, 144, 0.2);
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .optimized-content {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-
-        .optimized-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .optimized-header span {
-            color: var(--accent-gold);
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .optimized-header button {
-            background-color: rgba(255,255,255,0.1);
-            color: var(--text-color);
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>バズ分析＆コンテンツ自動生成AI Pro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f0c20 0%, #1a103c 50%, #0d081a 100%);
+      color: #f3f4f6;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+    .preserve-newlines {
+      white-space: pre-wrap !important;
+      word-break: break-word !important;
+    }
+  </style>
 </head>
-<body>
-    <div class="phone-container">
-        <div class="app-container">
-            <h1>バズ分析 & コンテンツ自動生成 AI Pro</h1>
+<body class="min-h-screen pb-12">
 
-            <div class="section">
-                <div class="section-header">
-                    <span class="number">STEP0</span>
-                    バズタイトルをコピペして保存
-                </div>
-                <textarea rows="3" placeholder="ここにバズタイトルを貼り付けてください..."></textarea>
-                <button class="save-btn">+ プルダウンに保存</button>
-            </div>
-
-            <div class="section">
-                <div class="section-header">
-                    <span class="number">STEP1</span>
-                    検索キーワードのお勧め
-                </div>
-                <p style="font-size: 12px; color: #888; margin-top: -10px; margin-bottom: 15px;">バズっているタイトルを見つけるための、お勧めの検索キーワードを提案します。タップしてコピーできます。</p>
-                <div class="keyword-grid">
-                    <div class="keyword-card gold">
-                        <span>【決定版】復縁したい 女子 LINE術</span>
-                        <span class="copy-icon">⎘</span>
-                        <span class="copy-text">コピー</span>
-                    </div>
-                    <div class="keyword-card blue">
-                        <span>男が冷められない沼 らせLINE共通点</span>
-                        <span class="copy-icon">⎘</span>
-                        <span class="copy-text">コピー</span>
-                    </div>
-                    <div class="keyword-card purple">
-                        <span>本命に無意識に出す サイン</span>
-                        <span class="copy-icon">⎘</span>
-                        <span class="copy-text">コピー</span>
-                    </div>
-                    <div class="keyword-card pink">
-                        <span>既読無視 男 本音 〇〇</span>
-                        <span class="copy-icon">⎘</span>
-                        <span class="copy-text">コピー</span>
-                    </div>
-                    <div class="keyword-card gold">
-                        <span>【永久保存版】「好き 避け」 「嫌い避け」</span>
-                        <span class="copy-icon">⎘</span>
-                        <span class="copy-text">コピー</span>
-                    </div>
-                    <div class="keyword-card blue">
-                        <span>LINE 即バレ注意！ 本命女性</span>
-                        <span class="copy-icon">⎘</span>
-                        <span class="copy-text">コピー</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dropdown-container">
-                <select>
-                    <option>あの人との相性はプロフィールリンクから</option>
-                </select>
-                <span class="dropdown-icon">▼</span>
-            </div>
-
-            <div class="action-btns">
-                <button class="delete-btn">選択中の項目を削除</button>
-                <button class="save-btn">+ プルダウンに保存</button>
-            </div>
-
-            <div class="optimized-content">
-                <div class="optimized-header">
-                    <span>最適化コンテンツ</span>
-                    <button>全体コピー</button>
-                </div>
-                <textarea rows="5" placeholder="【TikTok投稿用台本 (60秒仕様)】"></textarea>
-            </div>
-        </div>
+  <!-- Header -->
+  <header class="p-5 text-center border-b border-yellow-500/20 glass-card sticky top-0 z-50">
+    <div class="flex items-center justify-center gap-2">
+      <i class="fa-solid fa-crown text-yellow-400 text-xl"></i>
+      <h1 class="text-xl font-extrabold tracking-wider gold-gradient-text">バズ分析＆コンテンツ自動生成AI Pro</h1>
     </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-md mx-auto px-4 mt-6 space-y-6">
+
+    <!-- 🌟 STEP0: バズタイトルをコピペして保存 -->
+    <div class="glass-card rounded-2xl p-5 space-y-3 border-yellow-500/50 bg-yellow-500/5">
+      <h3 class="text-sm font-bold gold-gradient-text flex items-center gap-2">
+        <i class="fa-solid fa-cloud-arrow-down text-amber-400"></i> STEP0: バズタイトルをコピペして保存
+      </h3>
+      <p class="text-[11px] text-gray-300">リサーチで見つけたバズタイトルをここに貼り付けて保存できます。</p>
+      <input type="text" id="cta-text" placeholder="ここにバズタイトルを貼り付けてください..." class="w-full bg-black/40 text-xs border border-white/20 rounded-lg p-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-yellow-400 shadow-inner">
+      <div class="flex justify-end">
+        <button onclick="saveCustomCta()" class="px-4 py-2 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-black font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5">
+          <i class="fa-solid fa-plus-circle"></i> プルダウンに保存
+        </button>
+      </div>
+      <p id="save-msg" class="text-[10px] mt-1 hidden"></p>
+    </div>
+
+    <!-- 🌟 STEP1: 検索キーワードのお勧め & SNSワンタップリサーチ -->
+    <div class="glass-card rounded-2xl p-5 space-y-3 border-yellow-500/30 bg-black/30 shadow-xl">
+      <h3 class="text-sm font-bold gold-gradient-text flex items-center gap-2">
+        <i class="fa-solid fa-magnifying-glass text-amber-400"></i> STEP1: 検索キーワードのお勧め
+      </h3>
+      <p class="text-[11px] text-gray-300 leading-relaxed">
+        タップすると<b>キーワードのみが自動コピー</b>され、下の検索欄にセットされます。
+      </p>
+
+      <!-- キーワードカードグリッド -->
+      <div class="grid grid-cols-2 gap-2.5 pt-1">
+        <button onclick="copyKeyword('【決定版】復縁したい女子 LINE術')" class="p-3 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/40 rounded-xl text-left transition-all group relative">
+          <div class="text-[11px] font-bold text-amber-300 pr-5 leading-snug">【決定版】復縁したい女子 LINE術</div>
+          <div class="flex justify-between items-center mt-2 text-[9px] text-amber-400/80">
+            <span>タップでコピー</span>
+            <i class="fa-regular fa-copy"></i>
+          </div>
+        </button>
+
+        <button onclick="copyKeyword('男が冷められない沼らせLINE共通点')" class="p-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/40 rounded-xl text-left transition-all group relative">
+          <div class="text-[11px] font-bold text-blue-300 pr-5 leading-snug">男が冷められない沼らせLINE共通点</div>
+          <div class="flex justify-between items-center mt-2 text-[9px] text-blue-400/80">
+            <span>タップでコピー</span>
+            <i class="fa-regular fa-copy"></i>
+          </div>
+        </button>
+
+        <button onclick="copyKeyword('本命に無意識に出すサイン')" class="p-3 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/40 rounded-xl text-left transition-all group relative">
+          <div class="text-[11px] font-bold text-purple-300 pr-5 leading-snug">本命に無意識に出すサイン</div>
+          <div class="flex justify-between items-center mt-2 text-[9px] text-purple-400/80">
+            <span>タップでコピー</span>
+            <i class="fa-regular fa-copy"></i>
+          </div>
+        </button>
+
+        <button onclick="copyKeyword('既読無視 男 本音')" class="p-3 bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/40 rounded-xl text-left transition-all group relative">
+          <div class="text-[11px] font-bold text-pink-300 pr-5 leading-snug">既読無視 男 本音</div>
+          <div class="flex justify-between items-center mt-2 text-[9px] text-pink-400/80">
+            <span>タップでコピー</span>
+            <i class="fa-regular fa-copy"></i>
+          </div>
+        </button>
+
+        <button onclick="copyKeyword('【永久保存版】「好き避け」「嫌い避け」')" class="p-3 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/40 rounded-xl text-left transition-all group relative">
+          <div class="text-[11px] font-bold text-amber-300 pr-5 leading-snug">【永久保存版】「好き避け」「嫌い避け」</div>
+          <div class="flex justify-between items-center mt-2 text-[9px] text-amber-400/80">
+            <span>タップでコピー</span>
+            <i class="fa-regular fa-copy"></i>
+          </div>
+        </button>
+
+        <button onclick="copyKeyword('LINE 即バレ注意！本命女性')" class="p-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/40 rounded-xl text-left transition-all group relative">
+          <div class="text-[11px] font-bold text-blue-300 pr-5 leading-snug">LINE 即バレ注意！本命女性</div>
+          <div class="flex justify-between items-center mt-2 text-[9px] text-blue-400/80">
+            <span>タップでコピー</span>
+            <i class="fa-regular fa-copy"></i>
+          </div>
+        </button>
+      </div>
+
+      <!-- 検索ワード入力・SNS検索ボタン -->
+      <div class="pt-2 space-y-2 border-t border-white/10 mt-3">
+        <input type="text" id="search-keyword" placeholder="検索キーワード（カードタップで自動入力）" class="w-full bg-black/50 text-xs border border-white/20 rounded-lg p-2.5 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-400">
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="searchSns('tiktok')" class="py-2 bg-black text-white rounded-lg border border-white/20 text-[10px] font-bold flex items-center justify-center gap-1">
+            <i class="fa-brands fa-tiktok"></i> TikTokで検索
+          </button>
+          <button onclick="searchSns('twitter')" class="py-2 bg-black text-white rounded-lg border border-white/20 text-[10px] font-bold flex items-center justify-center gap-1">
+            <i class="fa-brands fa-x-twitter"></i> Xで検索
+          </button>
+          <button onclick="searchSns('instagram')" class="py-2 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white rounded-lg text-[10px] font-bold flex items-center justify-center gap-1">
+            <i class="fa-brands fa-instagram"></i> Instagram
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🌟 タイトル選択プルダウン & 操作 -->
+    <div class="glass-card rounded-2xl p-5 space-y-3">
+      <label class="text-xs font-bold text-gray-300 block">保存済みタイトルの選択</label>
+      <select id="cta-preset" class="w-full bg-black/50 text-xs border border-amber-500/40 rounded-lg p-3 text-amber-200 font-medium focus:outline-none">
+        <!-- JSで動的に構築 -->
+      </select>
+
+      <div class="flex gap-2 justify-between pt-1">
+        <button onclick="deleteSelectedCta()" class="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-300 text-xs rounded-lg border border-red-500/30 flex items-center gap-1">
+          <i class="fa-solid fa-trash-can"></i> 選択中の項目を削除
+        </button>
+        <button onclick="generateContent()" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-700 text-black font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1.5">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> このタイトルで生成
+        </button>
+      </div>
+    </div>
+
+    <!-- 🌟 生成結果 -->
+    <div id="output-section" class="hidden glass-card rounded-2xl p-5 border-yellow-500/40">
+      <div class="flex justify-between items-center mb-3">
+        <span class="text-xs text-yellow-400 font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> 最適化コンテンツ
+        </span>
+        <button onclick="copyAll()" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full text-gray-200 flex items-center gap-1">
+          <i class="fa-regular fa-copy"></i> 全体コピー
+        </button>
+      </div>
+      <div id="result-content" class="text-xs text-gray-200 leading-relaxed max-h-[400px] overflow-y-auto p-4 bg-black/40 rounded-lg border border-white/5 preserve-newlines select-text"></div>
+    </div>
+
+  </main>
+
+  <script>
+    const defaultPresets = [
+      '【神回】既読無視する男、実は〇〇考えてます',
+      '【永久保存版】「好き避け」「嫌い避け」完全見分け方',
+      '※閲覧注意 復縁したいなら絶対送っちゃダメなLINE',
+      '即バレ注意！本命の女性にだけ出す無意識サイン',
+      '【即・沼らせ】送るだけで男が冷められなくなるLINE共通点'
+    ];
+
+    // 🌟 キーワードをきれいにコピーし、入力欄にも自動挿入する関数
+    function copyKeyword(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        document.getElementById('search-keyword').value = text;
+        showStatusMsg(`「${text}」をコピーしました！`);
+      }).catch(err => {
+        // フォールバック処理
+        document.getElementById('search-keyword').value = text;
+        showStatusMsg(`「${text}」を検索欄にセットしました！`);
+      });
+    }
+
+    function searchSns(platform) {
+      const keyword = document.getElementById('search-keyword').value.trim();
+      if (!keyword) {
+        alert('キーワードを入力またはおすすめから選択してください。');
+        return;
+      }
+      const encoded = encodeURIComponent(keyword);
+      let url = '';
+      if (platform === 'tiktok') url = `https://www.tiktok.com/search?q=${encoded}`;
+      if (platform === 'twitter') url = `https://twitter.com/search?q=${encoded}&f=live`;
+      if (platform === 'instagram') url = `https://www.instagram.com/explore/tags/${encodeURIComponent(keyword.split(' ')[0])}/`;
+      
+      if (url) window.open(url, '_blank');
+    }
+
+    function getCustomPresets() {
+      const saved = localStorage.getItem('user_cta_list');
+      return saved ? JSON.parse(saved) : [];
+    }
+
+    function renderDropdown(selectedText = null) {
+      const select = document.getElementById('cta-preset');
+      const customs = getCustomPresets();
+      let html = '';
+
+      if (customs.length > 0) {
+        html += '<optgroup label="★ 保存したタイトル">';
+        customs.forEach((item, index) => {
+          html += `<option value="custom_${index}">★ ${item}</option>`;
+        });
+        html += '</optgroup>';
+      }
+
+      html += '<optgroup label="▼ AIおすすめプリセット">';
+      defaultPresets.forEach((item, index) => {
+        html += `<option value="default_${index}">${item}</option>`;
+      });
+      html += '</optgroup>';
+
+      select.innerHTML = html;
+      if (selectedText && customs.includes(selectedText)) {
+        select.value = `custom_${customs.indexOf(selectedText)}`;
+      }
+    }
+
+    function saveCustomCta() {
+      const input = document.getElementById('cta-text');
+      const text = input.value.trim();
+      if (!text) {
+        showStatusMsg('タイトルを入力してください', true);
+        return;
+      }
+      let customs = getCustomPresets();
+      if (!customs.includes(text)) {
+        customs.unshift(text);
+        localStorage.setItem('user_cta_list', JSON.stringify(customs));
+        renderDropdown(text);
+        input.value = '';
+        showStatusMsg('プルダウンに保存しました！');
+      } else {
+        showStatusMsg('すでに登録されています', true);
+      }
+    }
+
+    function deleteSelectedCta() {
+      const select = document.getElementById('cta-preset');
+      const val = select.value;
+      if (val.startsWith('custom_')) {
+        const idx = parseInt(val.replace('custom_', ''));
+        let customs = getCustomPresets();
+        customs.splice(idx, 1);
+        localStorage.setItem('user_cta_list', JSON.stringify(customs));
+        renderDropdown();
+        showStatusMsg('項目を削除しました', true);
+      } else {
+        showStatusMsg('標準プリセットは削除できません', true);
+      }
+    }
+
+    function showStatusMsg(text, isError = false) {
+      const msg = document.getElementById('save-msg');
+      msg.className = `text-[10px] mt-1 p-2 rounded ${isError ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'}`;
+      msg.innerHTML = text;
+      msg.classList.remove('hidden');
+      setTimeout(() => msg.classList.add('hidden'), 3000);
+    }
+
+    function generateContent() {
+      const select = document.getElementById('cta-preset');
+      const val = select.value;
+      const customs = getCustomPresets();
+      let title = '';
+
+      if (val.startsWith('custom_')) {
+        title = customs[parseInt(val.replace('custom_', ''))];
+      } else {
+        title = defaultPresets[parseInt(val.replace('default_', ''))];
+      }
+
+      const output = document.getElementById('output-section');
+      const result = document.getElementById('result-content');
+      output.classList.remove('hidden');
+      
+      result.textContent = `【TikTok投稿用台本（60秒仕様）】\nタイトル：${title}\n\n「好きな人に嫌われたくない…」そう思って焦ってLINEを送っていませんか？\n復縁・恋愛において絶対にやってはいけないLINEパターンと正しい立ち回りを解説します。\n\n気になった方はプロフィールのリンクから！\n\n#恋愛心理 #LINE術 #復縁 #沼らせ`;
+      output.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyAll() {
+      const text = document.getElementById('result-content').textContent;
+      navigator.clipboard.writeText(text);
+      alert('生成内容をコピーしました！');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderDropdown();
+    });
+  </script>
 </body>
 </html>
