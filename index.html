@@ -54,7 +54,7 @@
   <!-- Main Container -->
   <main class="max-w-md mx-auto px-4 mt-6 space-y-6">
 
-    <!-- Tips Card (バズ時間 & 文字数ガイド) -->
+    <!-- Tips Card -->
     <div class="glass-card rounded-2xl p-4 border-yellow-500/30">
       <h3 class="text-xs font-bold gold-gradient-text mb-2 flex items-center gap-1.5">
         <i class="fa-solid fa-lightbulb"></i> 攻略ワンポイントアドバイス
@@ -105,28 +105,28 @@
     <!-- Mode Selection -->
     <div class="glass-card rounded-2xl p-5">
       <h3 class="text-sm font-bold gold-gradient-text mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-list-check"></i> テーマを選択して作成
+        <i class="fa-solid fa-list-check"></i> バズタイトルを選択して生成
       </h3>
       
       <div class="space-y-2 text-xs">
-        <button onclick="selectTheme('既読スルーされた時、男性が本当に考えていること')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
-          <span>① 「既読スルーされた時、男性が本当に考えていること」</span>
+        <button onclick="selectTheme('既読無視する男の本音、実は〇〇です')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
+          <span>① 「既読無視する男の本音、実は〇〇です」</span>
           <i class="fa-solid fa-chevron-right text-gray-400"></i>
         </button>
-        <button onclick="selectTheme('好き避けと嫌い避けの決定的な違い')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
-          <span>② 「好き避けと嫌い避けの決定的な違い」</span>
+        <button onclick="selectTheme('『好き避け』と『嫌い避け』の見分け方')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
+          <span>② 「『好き避け』と『嫌い避け』の見分け方」</span>
           <i class="fa-solid fa-chevron-right text-gray-400"></i>
         </button>
-        <button onclick="selectTheme('復縁できる人・できない人の連絡頻度の差')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
-          <span>③ 「復縁できる人・できない人の連絡頻度の差」</span>
+        <button onclick="selectTheme('復縁できる女子が絶対にやらないLINE')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
+          <span>③ 「復縁できる女子が絶対にやらないLINE」</span>
           <i class="fa-solid fa-chevron-right text-gray-400"></i>
         </button>
-        <button onclick="selectTheme('本命だけに見せる男性の無意識の仕草3選')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
-          <span>④ 「本命だけに見せる男性の無意識の仕草3選」</span>
+        <button onclick="selectTheme('本命の女性にだけ無意識に出すサイン3選')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
+          <span>④ 「本命の女性にだけ無意識に出すサイン3選」</span>
           <i class="fa-solid fa-chevron-right text-gray-400"></i>
         </button>
-        <button onclick="selectTheme('恋が一気に冷める“沼らせLINE”の共通点')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
-          <span>⑤ 「恋が一気に冷める“沼らせLINE”の共通点」</span>
+        <button onclick="selectTheme('一瞬で冷められる沼らせLINEの共通点')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
+          <span>⑤ 「一瞬で冷められる沼らせLINEの共通点」</span>
           <i class="fa-solid fa-chevron-right text-gray-400"></i>
         </button>
       </div>
@@ -170,8 +170,8 @@
       document.getElementById('note-' + words.replace('文字', '')).classList.add('btn-active');
     }
 
-    function selectTheme(themeTitle) {
-      generateContent(themeTitle);
+    function selectTheme(title) {
+      generateContent(title);
     }
 
     function generateContent(title) {
@@ -185,26 +185,27 @@
 
       setTimeout(() => {
         resultContent.innerHTML = `【バズ要素分析】
-・テーマ：${title}
+・動画タイトル：${title}
 ・設定：TikTok ${tiktokLength}動画 / note ${noteWords}程度
-・推奨投稿時間（TikTok）：本日 21:30〜23:00（ターゲットアクティブ時間）
+・推奨投稿時間（TikTok）：本日 21:30〜23:00（感情が高まるゴールデンタイム）
 
 【TikTok台本（${tiktokLength}仕様）】
-■冒頭フック：『${title}』って、実は9割の人が勘違いしてるんです。
+■動画タイトル：${title}
+■冒頭フック：「LINE放置された…もう終わり？」って焦ってる人、ちょっと待って！
 ■本文（テンポ良く）：
-結論から言うと、男が本当に考えているのは「嫌い」ではなく「余裕のなさ」。
-1. 返信を後回しにする心理
-2. 本命にしか見せない葛藤
+男が既読無視する一番の理由は、実は「冷めたから」じゃありません。
+1. 返信を後回しにする男性心理
+2. 本命にしか見せない心の葛藤
 3. 追わせる女子の神対応
 ■CTA：彼の本当の気持ちが気になる方は、プロフィール欄の「無料相性診断」をやってみてね！
 
 【note記事本文（約${noteWords}）】
 タイトル：${title}〜彼の本当の心理と追わせる女の共通点〜
 
-「返信が来ない…」と不安になってスマホを何度も見てしまう night。
+「返信が来ない…」と不安になってスマホを何度も見てしまう夜、ありますよね。
 実は彼が既読スルーする背景には、あなたが思う以上の心理的理由があります。
 
-（中略：テーマに添った解説文章）
+（中略：タイトルに添った詳細解説文章）
 
 彼との相性や彼の本音を詳しく知りたい方は、プロフィールの無料相性診断をぜひ活用してみてくださいね。
 
