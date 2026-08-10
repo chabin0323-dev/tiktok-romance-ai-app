@@ -32,6 +32,12 @@
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 215, 0, 0.2);
     }
+    .btn-active {
+      background: rgba(234, 179, 8, 0.25) !important;
+      border-color: rgba(234, 179, 8, 0.8) !important;
+      color: #fde047 !important;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body class="min-h-screen pb-12">
@@ -48,17 +54,52 @@
   <!-- Main Container -->
   <main class="max-w-md mx-auto px-4 mt-6 space-y-6">
 
-    <!-- Top Hero Section -->
-    <div class="glass-card rounded-2xl p-5 text-center relative overflow-hidden">
-      <div class="absolute -right-4 -top-4 w-20 h-20 bg-yellow-500/10 rounded-full blur-xl"></div>
-      <h2 class="text-lg font-bold text-white mb-2">バズる投稿・記事を一瞬で構築</h2>
-      <p class="text-xs text-gray-300 mb-4">感情を動かす構成・台本・note記事・画像プロンプトまでワンタップで完了。</p>
+    <!-- Tips Card (バズ時間 & 文字数ガイド) -->
+    <div class="glass-card rounded-2xl p-4 border-yellow-500/30">
+      <h3 class="text-xs font-bold gold-gradient-text mb-2 flex items-center gap-1.5">
+        <i class="fa-solid fa-lightbulb"></i> 攻略ワンポイントアドバイス
+      </h3>
+      <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-300">
+        <div class="bg-black/30 p-2 rounded-lg border border-white/5">
+          <p class="font-bold text-yellow-300 mb-1"><i class="fa-brands fa-tiktok"></i> TikTokバズ時間</p>
+          <p>・平日：18:00〜21:00</p>
+          <p>・休日：11:00〜13:00</p>
+          <p class="text-pink-300">・深夜帯：22:00〜24:00</p>
+        </div>
+        <div class="bg-black/30 p-2 rounded-lg border border-white/5">
+          <p class="font-bold text-yellow-300 mb-1"><i class="fa-solid fa-book"></i> note適正文字数</p>
+          <p>・集客・誘導：500〜1,000字</p>
+          <p>・解説記事：1,500〜2,000字</p>
+          <p>・有料コンテンツ：3,000字〜</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option Selector -->
+    <div class="glass-card rounded-2xl p-5 space-y-4">
+      <h3 class="text-xs font-bold gold-gradient-text flex items-center gap-2">
+        <i class="fa-solid fa-sliders"></i> 出力条件設定
+      </h3>
       
-      <!-- Quick Action Button -->
-      <button onclick="generateContent('AIおまかせ', '60秒')" class="w-full py-3 px-6 rounded-xl gold-button text-sm shadow-lg shadow-yellow-500/10 flex items-center justify-center gap-2">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        AIおまかせで一括生成する（60秒）
-      </button>
+      <!-- TikTok Length -->
+      <div>
+        <label class="text-[11px] text-gray-300 mb-1.5 block">TikTok 動画尺</label>
+        <div class="flex gap-2">
+          <button id="tiktok-15s" onclick="setTiktokLength('15秒')" class="flex-1 py-1.5 rounded-lg bg-white/10 text-xs border border-white/20 transition-all">15秒</button>
+          <button id="tiktok-30s" onclick="setTiktokLength('30秒')" class="flex-1 py-1.5 rounded-lg bg-white/10 text-xs border border-white/20 transition-all btn-active">30秒</button>
+          <button id="tiktok-60s" onclick="setTiktokLength('60秒')" class="flex-1 py-1.5 rounded-lg bg-white/10 text-xs border border-white/20 transition-all">60秒</button>
+        </div>
+      </div>
+
+      <!-- note Word Count -->
+      <div>
+        <label class="text-[11px] text-gray-300 mb-1.5 block">note 記事文字数</label>
+        <div class="flex gap-2">
+          <button id="note-500" onclick="setNoteWords('500文字')" class="flex-1 py-1.5 rounded-lg bg-white/10 text-xs border border-white/20 transition-all btn-active">500文字</button>
+          <button id="note-1000" onclick="setNoteWords('1000文字')" class="flex-1 py-1.5 rounded-lg bg-white/10 text-xs border border-white/20 transition-all">1000文字</button>
+          <button id="note-2000" onclick="setNoteWords('2000文字')" class="flex-1 py-1.5 rounded-lg bg-white/10 text-xs border border-white/20 transition-all">2000文字</button>
+        </div>
+      </div>
     </div>
 
     <!-- Mode Selection -->
@@ -68,32 +109,26 @@
       </h3>
       
       <div class="space-y-2 text-xs">
-        <button onclick="selectTheme(1)" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
+        <button onclick="selectTheme('既読スルーされた時、男性が本当に考えていること')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
           <span>① 「既読スルーされた時、男性が本当に考えていること」</span>
           <i class="fa-solid fa-chevron-right text-gray-400"></i>
         </button>
-        <button onclick="selectTheme(2)" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
+        <button onclick="selectTheme('好き避けと嫌い避けの決定的な違い')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
           <span>② 「好き避けと嫌い避けの決定的な違い」</span>
           <i class="fa-solid fa-chevron-right text-gray-400"></i>
         </button>
-        <button onclick="selectTheme(3)" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
+        <button onclick="selectTheme('復縁できる人・できない人の連絡頻度の差')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
           <span>③ 「復縁できる人・できない人の連絡頻度の差」</span>
           <i class="fa-solid fa-chevron-right text-gray-400"></i>
         </button>
-        <button onclick="selectTheme(4)" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
+        <button onclick="selectTheme('本命だけに見せる男性の無意識の仕草3選')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
           <span>④ 「本命だけに見せる男性の無意識の仕草3選」</span>
           <i class="fa-solid fa-chevron-right text-gray-400"></i>
         </button>
-        <button onclick="selectTheme(5)" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
+        <button onclick="selectTheme('恋が一気に冷める“沼らせLINE”の共通点')" class="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10 flex justify-between items-center">
           <span>⑤ 「恋が一気に冷める“沼らせLINE”の共通点」</span>
           <i class="fa-solid fa-chevron-right text-gray-400"></i>
         </button>
-      </div>
-
-      <!-- Length Option -->
-      <div class="flex gap-2 mt-4">
-        <button id="btn-30s" onclick="setLength('30秒')" class="flex-1 py-2 rounded-lg bg-white/10 text-xs border border-white/20">30秒動画</button>
-        <button id="btn-60s" onclick="setLength('60秒')" class="flex-1 py-2 rounded-lg bg-yellow-500/20 text-xs border border-yellow-500/50 text-yellow-300">60秒動画</button>
       </div>
     </div>
 
@@ -107,7 +142,7 @@
           </button>
         </div>
         
-        <div id="result-content" class="text-xs text-gray-200 space-y-4 whitespace-pre-wrap leading-relaxed max-h-[500px] overflow-y-auto p-2 bg-black/30 rounded-lg">
+        <div id="result-content" class="text-xs text-gray-200 space-y-4 whitespace-pre-wrap leading-relaxed max-h-[500px] overflow-y-auto p-3 bg-black/40 rounded-lg border border-white/5">
           <!-- 生成結果挿入域 -->
         </div>
       </div>
@@ -116,62 +151,69 @@
   </main>
 
   <script>
-    let selectedLength = '60秒';
+    let tiktokLength = '30秒';
+    let noteWords = '500文字';
 
-    function setLength(length) {
-      selectedLength = length;
-      document.getElementById('btn-30s').className = length === '30秒' ? 'flex-1 py-2 rounded-lg bg-yellow-500/20 text-xs border border-yellow-500/50 text-yellow-300' : 'flex-1 py-2 rounded-lg bg-white/10 text-xs border border-white/20';
-      document.getElementById('btn-60s').className = length === '60秒' ? 'flex-1 py-2 rounded-lg bg-yellow-500/20 text-xs border border-yellow-500/50 text-yellow-300' : 'flex-1 py-2 rounded-lg bg-white/10 text-xs border border-white/20';
+    function setTiktokLength(len) {
+      tiktokLength = len;
+      ['15s', '30s', '60s'].forEach(id => {
+        document.getElementById('tiktok-' + id).classList.remove('btn-active');
+      });
+      document.getElementById('tiktok-' + len.replace('秒', 's')).classList.add('btn-active');
     }
 
-    function selectTheme(num) {
-      generateContent('テーマ' + num, selectedLength);
+    function setNoteWords(words) {
+      noteWords = words;
+      ['500', '1000', '2000'].forEach(id => {
+        document.getElementById('note-' + id).classList.remove('btn-active');
+      });
+      document.getElementById('note-' + words.replace('文字', '')).classList.add('btn-active');
     }
 
-    function generateContent(theme, length) {
+    function selectTheme(themeTitle) {
+      generateContent(themeTitle);
+    }
+
+    function generateContent(title) {
       const output = document.getElementById('output-section');
       const resultContent = document.getElementById('result-content');
       
       output.classList.remove('hidden');
-      resultContent.innerHTML = 'AIがバズ構成・台本・note記事を一括生成中...';
+      resultContent.innerHTML = `AIが構成・台本(${tiktokLength})・note記事(${noteWords})を一括生成中...`;
 
       output.scrollIntoView({ behavior: 'smooth' });
 
       setTimeout(() => {
         resultContent.innerHTML = `【バズ要素分析】
-・狙うフック：共感・恐怖（「私だけ放置？」という孤独感）
-・ターゲット：既読無視に悩む20〜40代女性
+・テーマ：${title}
+・設定：TikTok ${tiktokLength}動画 / note ${noteWords}程度
+・推奨投稿時間（TikTok）：本日 21:30〜23:00（ターゲットアクティブ時間）
 
-【TikTok台本（${length}）】
-■タイトル：既読スルーする男性の本音3選
-■冒頭フック：「LINE既読無視された…もう終わりかな？」って諦めるのはまだ早い！
-■本文：
-男性が既読無視する理由の9割は「嫌いになったから」じゃありません。
-1つ目は「後でゆっくり返したいから」。本命だからこそ適当に返したくないんです。
-2つ目は「返信内容に悩んでいるから」。
-3つ目は「単純に仕事や趣味で手一杯」。
-■結論：既読無視＝嫌い、ではありません。
-■保存誘導：後で見返せるように【保存】しておいてね！
+【TikTok台本（${tiktokLength}仕様）】
+■冒頭フック：『${title}』って、実は9割の人が勘違いしてるんです。
+■本文（テンポ良く）：
+結論から言うと、男が本当に考えているのは「嫌い」ではなく「余裕のなさ」。
+1. 返信を後回しにする心理
+2. 本命にしか見せない葛藤
+3. 追わせる女子の神対応
 ■CTA：彼の本当の気持ちが気になる方は、プロフィール欄の「無料相性診断」をやってみてね！
 
-【note記事本文】
-タイトル：既読スルーされた時に絶対やってはいけない3つのことと男性心理
+【note記事本文（約${noteWords}）】
+タイトル：${title}〜彼の本当の心理と追わせる女の共通点〜
 
-「返信が来ない…」とスマホを何度も確認してしまう夜、ありますよね。
-結論から言うと、男性の既読無視は「冷めたサイン」とは限りません。
+「返信が来ない…」と不安になってスマホを何度も見てしまう night。
+実は彼が既読スルーする背景には、あなたが思う以上の心理的理由があります。
 
-（中略）
+（中略：テーマに添った解説文章）
 
-不安な方は、まずはプロフィールの無料相性診断で彼の本音をチェックしてみてください。
+彼との相性や彼の本音を詳しく知りたい方は、プロフィールの無料相性診断をぜひ活用してみてくださいね。
 
-#恋愛心理 #既読無視 #復縁 #男性心理 #無料診断
+#恋愛心理 #男性心理 #既読スルー #復縁 #無料診断
 
 【画像生成プロンプト】
-TikTok用: Cinematic, moody lighting, a thoughtful young woman looking at smartphone, realistic photography style.
-note用: High quality aesthetic cover photo, romantic atmosphere, soft pastel lighting.
-
-【品質自己採点】：98点 / 100点（導線配置完了）`;
-      }, 1500);
+・TikTok用: Realistic vertical photo, a thoughtful Japanese woman looking at her phone, soft warm interior lighting, cinematic photography, 8k.
+・note用: Soft pastel mood, aesthetic couple background, natural daylight, high resolution.`;
+      }, 1200);
     }
 
     function copyAll() {
