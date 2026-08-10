@@ -98,10 +98,18 @@
           <option value="custom">▼ プリセットから選択（または下部に入力）</option>
           <option value="気になる方はプロフィールのリンクから">基本：気になる方はプロフィールのリンクから</option>
           <option value="プロフィールの「無料相性診断」を試してみてね！">恋愛：プロフィールの「無料相性診断」を試してみてね！</option>
+          <option value="プロフィールリンクからあの人との相性を占えます！">占い：プロフィールリンクからあの人との相性を占えます！</option>
           <option value="無料の限定マガジンはプロフィールから受け取れます">副業・ビジネス：無料のマガジンはプロフィールから</option>
           <option value="詳しくはプロフィールの公式LINEからチェックしてみてね！">LINE誘導：公式LINEからチェックしてみてね！</option>
         </select>
-        <input type="text" id="cta-text" value="気になる方はプロフィールのリンクから" placeholder="誘導文を入力してください" class="w-full bg-black/40 text-xs border border-white/20 rounded-lg p-2 text-yellow-300 placeholder-gray-500 focus:outline-none focus:border-yellow-400">
+
+        <div class="flex gap-2">
+          <input type="text" id="cta-text" oninput="saveCtaAuto()" value="気になる方はプロフィールのリンクから" placeholder="誘導文を入力してください" class="flex-1 bg-black/40 text-xs border border-white/20 rounded-lg p-2 text-yellow-300 placeholder-gray-500 focus:outline-none focus:border-yellow-400">
+          <button onclick="saveCtaManual()" class="px-3 py-2 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 text-xs rounded-lg border border-yellow-500/40 flex items-center gap-1 whitespace-nowrap">
+            <i class="fa-solid fa-floppy-disk"></i> 保存
+          </button>
+        </div>
+        <p id="save-msg" class="text-[10px] text-green-400 mt-1 hidden"><i class="fa-solid fa-check"></i> 入力した文章を保存しました</p>
       </div>
     </div>
 
@@ -158,13 +166,36 @@
     let noteWords = '500文字';
     let currentThemeIndex = 0;
 
-    const titles = [
-      "既読無視する男の本音、実は〇〇です",
-      "『好き避け』と『嫌い避け』の見分け方",
-      "復縁できる女子が絶対にやらないLINE",
-      "本命の女性にだけ無意識に出すサイン3選",
-      "一瞬で冷められる沼らせLINEの共通点"
-    ];
+    // ページ読み込み時に保存済みCTAを復元
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedCta = localStorage.getItem('custom_cta_text');
+      if (savedCta) {
+        document.getElementById('cta-text').value = savedCta;
+      }
+    });
+
+    function saveCtaAuto() {
+      const text = document.getElementById('cta-text').value;
+      localStorage.setItem('custom_cta_text', text);
+    }
+
+    function saveCtaManual() {
+      saveCtaAuto();
+      const msg = document.getElementById('save-msg');
+      msg.classList.remove('hidden');
+      setTimeout(() => {
+        msg.classList.add('hidden');
+      }, 2000);
+    }
+
+    function applyCtaPreset() {
+      const select = document.getElementById('cta-preset');
+      const input = document.getElementById('cta-text');
+      if (select.value !== 'custom') {
+        input.value = select.value;
+        saveCtaAuto();
+      }
+    }
 
     const tiktokTemplates = {
       2: {
@@ -244,7 +275,7 @@ NG行動を知っておくだけでやり直せる確率は上がります！
 ■ 復縁できる女子が「絶対にやらないLINE」4選
 
 1. 感謝や反省を伝える長文LINE
-「今までありがとう」「私が悪かった」と長文で送ると、相手は「重い」「返事に困る」と感じて警戒を強めます。
+「今までありがとう」「私が悪かった」と長文で送ると、相手は「重い」「返気に困る」と感じて警戒を強めます。
 
 2. 用事のない「探りLINE」
 「元気に設定してる？」「最近寒いね」など、理由のない連絡は未練が透けて見え、返信の優先度を下げられます。
@@ -322,14 +353,6 @@ NG行動を知っておくだけでやり直せる確率は上がります！
       }
     };
 
-    function applyCtaPreset() {
-      const select = document.getElementById('cta-preset');
-      const input = document.getElementById('cta-text');
-      if (select.value !== 'custom') {
-        input.value = select.value;
-      }
-    }
-
     function setTiktokLength(len) {
       tiktokLength = len;
       ['15s', '30s', '60s'].forEach(id => {
@@ -367,7 +390,7 @@ NG行動を知っておくだけでやり直せる確率は上がります！
           : tiktokTemplates[2][tiktokLength];
 
         let ntTemplate = (noteTemplates[currentThemeIndex] && noteTemplates[currentThemeIndex][noteWords]) 
-          ? noteTemplates[currentThemeIndex][noteWords] 
+          ? noteTemplates[2][noteWords] 
           : noteTemplates[2][noteWords];
 
         let ttText = ttTemplate.replace('{CTA}', customCta);
